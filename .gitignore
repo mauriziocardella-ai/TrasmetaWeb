@@ -1,0 +1,14 @@
+# Dipendenze
+node_modules/
+
+# Variabili d'ambiente (DATI SENSIBILI)
+.env
+
+# Log di sistema
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# File di sistema (macOS/Windows)
+.DS_Store
+Thumbs.db
