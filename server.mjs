@@ -1,63 +1,74 @@
-import { createServer } from 'http';
-import { readFile } from 'fs/promises';
-import { extname, join } from 'path';
-
-
+import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+import { extname, join } from 'node:path';
 import { HOST, PORT } from './config.js';
+
 const hostname = HOST;
 const port = PORT;
 
 const server = createServer(async (req, res) => {
-  // Se la richiesta è per la radice, serviamo l'index.html
-  let filePath = join('src', req.url === '/' ? 'index.html' : req.url);
+    // 1. GESTIONE API (Richieste dati per il Router)
+    // Se l'URL inizia con /api, non cerchiamo file in /src ma rispondiamo con i dati
+    if (req.url.startsWith('/api/')) {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Access-Control-Allow-Origin', '*'); // Permette al frontend di comunicare col backend
 
-  try {
-    const data = await readFile(filePath);
-    // Impostiamo il Content-Type in base all'estensione del file
-    let contentType = 'text/html';
-    switch (extname(filePath)) {
-      case '.js':
-        contentType = 'application/javascript';
-        break;
-      case '.css':
-        contentType = 'text/css';
-        break;
-      case '.json':
-        contentType = 'application/json';
-        break;
-      case '.png':
-        contentType = 'image/png';
-        break;
-      case '.jpg':
-      case '.jpeg':
-        contentType = 'image/jpeg';
-        break;
-      case '.ico':
-        contentType = 'image/x-icon';
-        break;
-      // Aggiungi altri casi se necessario
+        if (req.url === '/api/test-data') {
+            try {
+                // Qui per ora leggiamo il JSON, in futuro qui metteremo Firebird
+                const data = await readFile('./src/data/test-data.json', 'utf-8');
+                res.writeHead(200);
+                res.end(data);
+                return; 
+            } catch (err) {
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: "Errore nel recupero dati" }));
+                return;
+            }
+        }
     }
-    res.writeHead(200, { 'Content-Type': contentType });
-    res.end(data);
-  } catch (err) {
-    // Se il file richiesto non viene trovato, controlliamo se l'URL ha un'estensione.
-    // Se sì, restituiamo un errore 404, altrimenti serviamo l'index.html per le SPA.
-    if (extname(filePath)) {
-      res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end('File non trovato');
-    } else {
-      try {
-        const indexData = await readFile(join('src', 'index.html'));
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(indexData);
-      } catch (err2) {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('File non trovato');
-      }
+
+    // 2. GESTIONE FILE STATICI (Frontend)
+    let filePath = join('src', req.url === '/' ? 'index.html' : req.url);
+
+    try {
+        const data = await readFile(filePath);
+        
+        // Mappatura estensioni -> Content-Type
+        const map = {
+            '.ico': 'image/x-icon',
+            '.html': 'text/html',
+            '.js': 'application/javascript',
+            '.json': 'application/json',
+            '.css': 'text/css',
+            '.png': 'image/png',
+            '.jpg': 'image/jpeg',
+            '.svg': 'image/svg+xml',
+        };
+
+        const ext = extname(filePath);
+        res.writeHead(200, { 'Content-Type': map[ext] || 'text/html' });
+        res.end(data);
+
+    } catch (err) {
+        // 3. LOGICA FALLBACK PER SPA
+        // Se il file non esiste e non ha estensione (es. /mod1), serviamo index.html
+        if (extname(filePath)) {
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Risorsa non trovata');
+        } else {
+            try {
+                const indexData = await readFile(join('src', 'index.html'));
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                res.end(indexData);
+            } catch (errIndex) {
+                res.writeHead(500);
+                res.end('Errore critico del server');
+            }
+        }
     }
-  }
 });
 
 server.listen(port, hostname, () => {
-  console.log(`Server in esecuzione su http://${port}:${hostname}/`);
+    console.log(`🚀 Server in esecuzione su http://${hostname}:${port}/`);
 });

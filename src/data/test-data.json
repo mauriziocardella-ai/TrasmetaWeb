@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "data": {
+    "progetto": "TrasmetaWEB",
+    "versione": "1.0.0",
+    "sviluppatore": "Trasmeta Web User",
+    "utenti_attivi": [
+      { "id": 1, "nome": "Mario", "ruolo": "Admin" },
+      { "id": 2, "nome": "Luigi", "ruolo": "User" }
+    ],
+    "impostazioni": {
+      "debug": true,
+      "timeout": 5000
+    }
+  }
+}
