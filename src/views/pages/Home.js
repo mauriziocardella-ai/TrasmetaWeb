@@ -1,3 +1,6 @@
+import PDF from '../../../services/PDF.js'
+import WY_REST from '../../../services/WY_trassmetarest.js'
+
 let Home = {
     render : async () => {
         let view =  /*html*/`
@@ -14,6 +17,9 @@ let Home = {
             <button id="btn-PDF" class="button is-primary" style="margin-top: 1rem;">
                 Stampa PDF
             </button>
+            <button id="btn-REST" class="button is-primary" style="margin-top: 1rem;">
+                REST
+            </button>
         `
         return view
     },
@@ -24,26 +30,19 @@ let Home = {
             // 1. Seleziona l'elemento HTML che vuoi trasformare
             const elemento = document.getElementById('home-section');
 
-            // 2. Configura le opzioni (opzionale)
-            const opzioni = {
-                margin:       10,
-                filename:     'documento_trasmeta.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 }, // Maggiore è il numero, migliore è la risoluzione
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
+            PDF.open_browser(elemento)
 
-            // 3. Genera e scarica il file
-            //html2pdf().set(opzioni).from(elemento).save();
-            // Generiamo il PDF ma non lo salviamo
-            html2pdf().set(opzioni).from(elemento).outputPdf('blob').then(function(blob) {
-                // Creiamo un URL temporaneo per il file generato
-                const url = URL.createObjectURL(blob);
-                
-                // Lo apriamo in una nuova scheda del browser
-                window.open(url, '_blank');
-            });
         })
+
+        const btn_REST = document.getElementById('btn-REST');
+
+        btn_REST.addEventListener('click', async () => {
+            // 1. Seleziona l'elemento HTML che vuoi trasformare
+            console.log("btn-rest")
+            WY_REST.testHealth();
+
+        })
+
     } 
 }
 
