@@ -1,3 +1,4 @@
+import messageManager from './messageManager.js';
 // services/jsonManager.js
 
 /**
@@ -10,6 +11,7 @@ export async function getJson(path) {
     
     try {
         const response = await fetch(url);
+        //messageManager.error("JSON: " + Trovato);
         if (!response.ok) throw new Error(`Status: ${response.status}`);
         return await response.json();
     } catch (error) {
