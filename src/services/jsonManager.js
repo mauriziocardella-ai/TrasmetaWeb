@@ -4,15 +4,16 @@
  * Recupera JSON tramite fetch. 
  * Funziona sia per URL esterni che per file locali al progetto (se serviti da un web server)
  */
-export async function getJson(url) {
+export async function getJson(path) {
+    // Se siamo nel browser, assicuriamoci che il path sia relativo alla root
+    const url = path.startsWith('http') ? path : window.location.origin + path;
+    
     try {
         const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`Errore HTTP! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Status: ${response.status}`);
         return await response.json();
     } catch (error) {
-        console.error(`❌ Errore nel recupero del JSON:`, error.message);
+        console.error(`❌ Errore fetch su ${url}:`, error.message);
         return null;
     }
 }

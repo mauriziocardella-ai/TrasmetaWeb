@@ -1,3 +1,6 @@
+ import crypto from 'node:crypto';
+ import { REST_API_URL, DB_SECRET_KEY } from './config.js';
+
  let WY_REST = {
     testHealth : async () => {
         console.log("dentro")

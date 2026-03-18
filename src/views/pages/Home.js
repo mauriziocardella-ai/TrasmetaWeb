@@ -1,5 +1,4 @@
 import PDF from '../../../services/PDF.js'
-import WY_REST from '../../../services/WY_trassmetarest.js'
 
 let Home = {
     render : async () => {
@@ -39,8 +38,13 @@ let Home = {
         btn_REST.addEventListener('click', async () => {
             // 1. Seleziona l'elemento HTML che vuoi trasformare
             console.log("btn-rest")
-            WY_REST.testHealth();
-
+            try {
+                    const response = await fetch('/api/health'); // Chiama il TUO server Node
+                    const data = await response.json();
+                    console.log('Stato del Server Firebird:', data);
+                } catch (err) {
+                    console.error('Errore durante il recupero dello stato:', err);
+            }
         })
 
     } 
