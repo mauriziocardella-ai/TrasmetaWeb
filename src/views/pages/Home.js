@@ -13,41 +13,10 @@ let Home = {
                     </div>
                 </div>
             </section>
-            <button id="btn-PDF" class="button is-primary" style="margin-top: 1rem;">
-                Stampa PDF
-            </button>
-            <button id="btn-REST" class="button is-primary" style="margin-top: 1rem;">
-                REST
-            </button>
         `
         return view
     },
-    after_render: async () => {
-        const btn = document.getElementById('btn-PDF');
-
-        btn.addEventListener('click', async () => {
-            // 1. Seleziona l'elemento HTML che vuoi trasformare
-            const elemento = document.getElementById('home-section');
-
-            PDF.open_browser(elemento)
-
-        })
-
-        const btn_REST = document.getElementById('btn-REST');
-
-        btn_REST.addEventListener('click', async () => {
-            // 1. Seleziona l'elemento HTML che vuoi trasformare
-            console.log("btn-rest")
-            try {
-                    const response = await fetch('/api/health'); // Chiama il TUO server Node
-                    const data = await response.json();
-                    console.log('Stato del Server Firebird:', data);
-                } catch (err) {
-                    console.error('Errore durante il recupero dello stato:', err);
-            }
-        })
-
-    } 
+    after_render: async () => {} 
 }
 
 export default Home;

@@ -2,6 +2,7 @@ import Mod1_Detail from './Mod1_Detail.js'
 import modREST from './modREST.js';
 // server.mjs
 import { getJson } from '../../../services/jsonManager.js';
+import messageManager from '../../../services/messageManager.js';
 
 let Mod1 = {
     render : async () => {
@@ -62,10 +63,16 @@ let Mod1 = {
                     const data = await response.json();
                     
                     // Assicurati che modREST.render accetti la stringa data.status
+                    if (!response.ok || data.error) {
+                        // ✅ Qui document esiste ed è corretto usare il manager
+                        messageManager.error(data.message || "Errore durante la richiesta");
+                        return;
+                    }       
+
+                    messageManager.success("Server Firebird Online!");
                     container.innerHTML = await modREST.render(data.status);
-                    console.log('Stato del Server Firebird:', data);
                 } catch (err) {
-                    console.error('Errore durante il recupero dello stato REST:', err);
+                    messageManager.error('Errore durante il recupero dello stato REST:', err);
                 }
             });
         }

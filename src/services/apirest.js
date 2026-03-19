@@ -3,11 +3,13 @@ import { REST_API_URL,
          DB_SECRET_KEY } from '../../config.js';
 
 export async function ApiRest(pathname, res, req) {
-    const resource = pathname.replace('/api/', '');
-    const targetUrl = `${REST_API_URL}/${resource}`;
+    const resource = pathname.replace('/^\/api//', '');
+    const baseUrl = new URL(REST_API_URL);
+    const targetUrl = new URL(resource, baseUrl).href;
     const method = req.method;
     const path = `/api/${resource}`; // Il path che il server REST si aspetta di verificare
 
+    console.log(`🚀 Tentativo di chiamata a: ${targetUrl}`);
     try {
         // 1. Generazione Timestamp
         const timestamp = new Date().toISOString();
@@ -46,6 +48,8 @@ export async function ApiRest(pathname, res, req) {
     } catch (err) {
         console.error("❌ Errore durante la firma o la chiamata:", err.message);
         res.writeHead(502);
-        return res.end(JSON.stringify({ error: "Errore di comunicazione col server REST" }));
+        return res.end(JSON.stringify({
+            error: true,
+            message: "Errore di comunicazione col server REST" }));
     }
 }
