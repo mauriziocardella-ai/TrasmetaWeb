@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Avvia TrasmetaWeb",
+      "program": "${workspaceFolder}/server.mjs",
+      "console": "integratedTerminal",
+      "runtimeArgs": [
+        "--experimental-network-inspection"
+      ],
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "listening on port ([0-9]+)", 
+        "uriFormat": "http://localhost:%s"
+      }
+    }
+  ]
+}

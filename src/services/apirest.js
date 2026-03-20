@@ -1,28 +1,34 @@
 import crypto from 'node:crypto';
-import { REST_API_URL, 
-         DB_SECRET_KEY } from '../../config.js';
+import { REST_API_URL, DB_SECRET_KEY } from '../../config.js';
 
 export async function ApiRest(pathname, res, req) {
-    const resource = pathname.replace('/^\/api//', '');
+    // 1. CORREZIONE REGEX: Togliamo le virgolette per farla diventare una vera Regex
+    // Da "/api/element?codice=123" otteniamo "element?codice=123"
+    const resource = pathname;
+
+    // 2. COSTRUZIONE URL: Usiamo baseUrl definito correttamente
     const baseUrl = new URL(REST_API_URL);
     const targetUrl = new URL(resource, baseUrl).href;
-    const method = req.method;
-    const path = `/api/${resource}`; // Il path che il server REST si aspetta di verificare
 
-    console.log(`🚀 Tentativo di chiamata a: ${targetUrl}`);
+    const method = req.method;
+
+    // 3. PATH PER FIRMA: Il server REST solitamente vuole il path relativo pulito
+    // Es: "/element?codice=MS.000.001"
+    const signaturePath = resource; 
+
+    console.log(`📡 Chiamata Proxy: ${method} ${targetUrl}`);
+
     try {
-        // 1. Generazione Timestamp
         const timestamp = new Date().toISOString();
 
-        // 2. Creazione della firma HMAC-SHA256 (Versione Node.js)
-        const dataToSign = `${timestamp}|${method}|${path}|`;
+        // Generazione firma HMAC-SHA256
+        const dataToSign = `${timestamp}|${method}|${signaturePath}|`;
         const signature = crypto
             .createHmac('sha256', DB_SECRET_KEY)
             .update(dataToSign)
             .digest('hex');
 
-        // 3. Eseguiamo la fetch dal server Node al server REST
-        console.log (targetUrl);
+        // Esecuzione fetch
         const response = await fetch(targetUrl, {
             method: method,
             headers: {
@@ -32,10 +38,20 @@ export async function ApiRest(pathname, res, req) {
                 'Content-Type': 'application/json'
             }
         });
+        console.log(`✅ Risposta ricevuta dal server remoto!`);
+        console.log(`📊 Status Code: ${response.status}`);
+        console.log(`🔗 URL chiamato: ${targetUrl}`);
 
-        const data = await response.json();
+        // Gestione risposta (testo per sicurezza, poi JSON)
+        const text = await response.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            data = { message: text };
+        }
 
-        // 4. Risposta al frontend con Header CORS
+        // Risposta al frontend
         res.writeHead(response.status, {
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*', 
@@ -46,10 +62,12 @@ export async function ApiRest(pathname, res, req) {
         return res.end(JSON.stringify(data));
 
     } catch (err) {
-        console.error("❌ Errore durante la firma o la chiamata:", err.message);
+        console.error("❌ Errore durante la chiamata REST:", err.message);
         res.writeHead(502);
         return res.end(JSON.stringify({
             error: true,
-            message: "Errore di comunicazione col server REST" }));
+            message: "Errore di comunicazione col server REST",
+            detail: err.message 
+        }));
     }
 }

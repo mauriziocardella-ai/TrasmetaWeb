@@ -59,7 +59,8 @@ let Mod1 = {
                 console.log("btn-rest");
                 try {
                     // Questo funziona già bene perché passa dal tuo Proxy HMAC nel server.mjs
-                    const response = await fetch('/api/health'); 
+                    //const response = await fetch('/api/element?codice=MS.000.001'); 
+                    const response = await fetch('/api/element?codice=MS.000.100'); 
                     const data = await response.json();
                     
                     // Assicurati che modREST.render accetti la stringa data.status
@@ -70,7 +71,10 @@ let Mod1 = {
                     }       
 
                     messageManager.success("Server Firebird Online!");
-                    container.innerHTML = await modREST.render(data.status);
+                    container.innerHTML = await modREST.render(data);
+                    if (modREST.after_render) {
+                        await modREST.after_render();
+                    }
                 } catch (err) {
                     messageManager.error('Errore durante il recupero dello stato REST:', err);
                 }

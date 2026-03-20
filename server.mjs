@@ -21,7 +21,8 @@ const server = createServer(async (req, res) => {
 
     // --- 1. GESTIONE API (Verso Server REST Firebird) ---
     if (pathname.startsWith('/api/')) {
-        return await ApiRest(pathname, res, req);
+        const fullPathWithQuery = pathname + url.search; 
+        return await ApiRest(fullPathWithQuery, res, req);
     }
 
     // Nota: Se i tuoi file .json sono in src/data/ o src/json/, 
