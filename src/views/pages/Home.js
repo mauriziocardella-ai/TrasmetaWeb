@@ -1,7 +1,5 @@
-import PDF from '../../../services/PDF.js'
-
 let Home = {
-    render : async () => {
+    render: async () => {
         let view =  /*html*/`
             <section id="home-section">
                 <div class="p-5 mb-4 bg-light rounded-3 border shadow-sm">
@@ -16,7 +14,7 @@ let Home = {
         `
         return view
     },
-    after_render: async () => {} 
+    after_render: async () => { }
 }
 
 export default Home;

@@ -1,7 +1,7 @@
 import crypto from 'node:crypto';
-import { REST_API_URL, DB_SECRET_KEY } from '../../config.js';
+import { REST_API_URL, DB_SECRET_KEY } from '#config';
 
-export async function ApiRest(pathname, res, req) {
+export async function apiRest(pathname, res, req) {
     // 1. CORREZIONE REGEX: Togliamo le virgolette per farla diventare una vera Regex
     // Da "/api/element?codice=123" otteniamo "element?codice=123"
     const resource = pathname;
@@ -14,7 +14,7 @@ export async function ApiRest(pathname, res, req) {
 
     // 3. PATH PER FIRMA: Il server REST solitamente vuole il path relativo pulito
     // Es: "/element?codice=MS.000.001"
-    const signaturePath = resource; 
+    const signaturePath = resource;
 
     console.log(`📡 Chiamata Proxy: ${method} ${targetUrl}`);
 
@@ -54,7 +54,7 @@ export async function ApiRest(pathname, res, req) {
         // Risposta al frontend
         res.writeHead(response.status, {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*', 
+            'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, X-Timestamp, X-Signature'
         });
@@ -67,7 +67,7 @@ export async function ApiRest(pathname, res, req) {
         return res.end(JSON.stringify({
             error: true,
             message: "Errore di comunicazione col server REST",
-            detail: err.message 
+            detail: err.message
         }));
     }
 }

@@ -1,11 +1,11 @@
 import Mod1_Detail from './Mod1_Detail.js'
 import modREST from './modREST.js';
 // server.mjs
-import { getJson } from '../../../services/jsonManager.js';
-import messageManager from '../../../services/messageManager.js';
+import { getJson } from '/src/services/json-manager.js';
+import messageManager from '/src/services/message-manager.js';
 
 let Mod1 = {
-    render : async () => {
+    render: async () => {
         let view =  /*html*/`
             <section class="section">
                 <h1> Modello 1 </h1>
@@ -22,7 +22,7 @@ let Mod1 = {
                 </div>
             </section>
         `
-        
+
         return view
     },
     after_render: async () => {
@@ -32,18 +32,18 @@ let Mod1 = {
 
 
 
-    // GESTIONE JSON LOCALE
+        // GESTIONE JSON LOCALE
         if (btn_json && container) {
             btn_json.addEventListener('click', async () => {
                 console.log("Richiesta file JSON locale via jsonManager...");
-                
+
                 // Usiamo la funzione del tuo servizio per pulizia
-                const datiJson = await getJson('/json/test-data.json');
+                const datiJson = await getJson('/src/json/test-data.json');
 
                 if (datiJson) {
                     console.log("Dati ricevuti:", datiJson);
                     container.innerHTML = await Mod1_Detail.render(datiJson);
-                    
+
                     if (Mod1_Detail.after_render) {
                         await Mod1_Detail.after_render();
                     }
@@ -54,21 +54,21 @@ let Mod1 = {
         }
 
 
-        if(btn_rest && container) {
+        if (btn_rest && container) {
             btn_rest.addEventListener('click', async () => {
                 console.log("btn-rest");
                 try {
                     // Questo funziona già bene perché passa dal tuo Proxy HMAC nel server.mjs
                     //const response = await fetch('/api/element?codice=MS.000.001'); 
-                    const response = await fetch('/api/element?codice=MS.000.100'); 
+                    const response = await fetch('/api/element?codice=MS.000.100');
                     const data = await response.json();
-                    
+
                     // Assicurati che modREST.render accetti la stringa data.status
                     if (!response.ok || data.error) {
                         // ✅ Qui document esiste ed è corretto usare il manager
                         messageManager.error(data.message || "Errore durante la richiesta");
                         return;
-                    }       
+                    }
 
                     messageManager.success("Server Firebird Online!");
                     container.innerHTML = await modREST.render(data);

@@ -2,6 +2,10 @@
   "name": "TrasmetaWEB",
   "version": "1.0.0",
   "type": "module",
+  "imports": {
+    "#config": "./config.js",
+    "#services/*": "./src/services/*.js"
+  },
   "main": "server.mjs",
   "scripts": {
     "start": "node --env-file=.env server.mjs",

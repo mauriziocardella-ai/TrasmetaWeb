@@ -1,56 +1,80 @@
-//pages
-import Home         from './views/pages/Home.js'
-import Error404     from './views/pages/Error404.js'
+/**
+ * TRASMETAWEB - Router Centrale (SPA)
+ * Gestisce il caricamento dinamico dei componenti e delle pagine 
+ * basandosi sull'hash dell'URL.
+ */
 
-//pages/radisan
-import Mod1         from './views/pages/radisan/Mod1.js'
+// Import delle Viste (Pages)
+import Home from './views/pages/Home.js';
+import Error404 from './views/pages/Error404.js';
 
-//component
-import Navbar       from './views/components/Navbar.js'
-import Bottombar    from './views/components/Bottombar.js' 
+// Import Moduli Specifici (Radisan)
+import Mod1 from './views/pages/radisan/Mod1.js';
 
-//services
-import Utils        from './services/Utils.js'
+// Import Componenti UI
+import Navbar from './views/components/Navbar.js';
+import Bottombar from './views/components/Bottombar.js';
 
-// Elenco delle rotte supportate (hash). Qualsiasi URL diverso da queste rotte restituirà un errore 404
+// Import Servizi
+import Utils from './services/Utils.js';
+
+/**
+ * Mappa delle rotte supportate.
+ * Associa un percorso URL al modulo JS corrispondente.
+ */
 const routes = {
-    '/'      : Home
-    ,'/mod1' : Mod1
+    '/': Home,
+    '/mod1': Mod1,   // Accessibile via #/mod1
+    '/element': Mod1    // Aggiunto per supportare la rotta #/element?codice=...
 };
 
-
-// Il codice del router. 
-// Prende un URL, lo confronta con l'elenco delle rotte supportate e quindi renderizza la pagina di contenuto corrispondente
+/**
+ * Funzione principale del Router.
+ * Orchestra il rendering di Header, Footer e del contenuto variabile.
+ */
 const router = async () => {
 
-    // Carica l'elemento della pagina solo al momento dell'uso
-    const header = null || document.getElementById('header_container');
-    const content = null || document.getElementById('page_container');
-    const footer = null || document.getElementById('footer_container');
-    
-    // Render header e footer della pagina
+    // Riferimenti ai contenitori DOM definiti in index.html
+    const header = document.getElementById('header_container');
+    const content = document.getElementById('page_container');
+    const footer = document.getElementById('footer_container');
+
+    // Rendering dei componenti statici (Header e Footer)
+    // Nota: after_render() gestisce l'attivazione di listener o animazioni
     header.innerHTML = await Navbar.render();
     await Navbar.after_render();
+
     footer.innerHTML = await Bottombar.render();
     await Bottombar.after_render();
 
+    // Analisi dell'URL corrente tramite Utils
+    // Esempio: #/element?codice=MS.000.001 -> { resource: 'element', params: { codice: '...' } }
+    let request = Utils.parseRequestURL();
 
-    // Ottieni l'URL analizzato (o parsato) dalla barra degli indirizzi
-    let request = Utils.parseRequestURL()
+    /**
+     * Ricostruzione del percorso per il matching con l'oggetto 'routes'.
+     * Gestisce i tre livelli: /risorsa /:id /verbo
+     */
+    let parsedURL = (request.resource ? '/' + request.resource : '/') +
+        (request.id ? '/:id' : '') +
+        (request.verb ? '/' + request.verb : '');
 
-    // Analizza l'URL e, se contiene una parte relativa all'ID, sostituiscila con la stringa ':id
-    let parsedURL = (request.resource ? '/' + request.resource : '/') + (request.id ? '/:id' : '') + (request.verb ? '/' + request.verb : '')
-    
-    // Recupera la pagina dall'elenco delle rotte supportate
-    // Se l'URL analizzato non è nella lista di rotte supportate, seleziona invece la pagina 404
-    let page = routes[parsedURL] ? routes[parsedURL] : Error404
+    // Selezione della pagina corretta o fallback su 404
+    let page = routes[parsedURL] ? routes[parsedURL] : Error404;
+
+    // Rendering del contenuto principale della pagina
     content.innerHTML = await page.render();
-    await page.after_render();
-  
-}
 
-// Listen on hash change:
+    /**
+     * Esecuzione della logica post-caricamento.
+     * È qui che Mod1.js leggerà i parametri da Utils.parseRequestURL() 
+     * per avviare la chiamata REST verso il Proxy Node.
+     */
+    await page.after_render();
+};
+
+// Listener per il cambio dell'hash (navigazione tra pagine)
 window.addEventListener('hashchange', router);
 
-// Listen on page load:
+// Listener per il caricamento iniziale della pagina
 window.addEventListener('load', router);

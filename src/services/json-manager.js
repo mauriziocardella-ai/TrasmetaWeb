@@ -1,5 +1,5 @@
-import messageManager from './messageManager.js';
-// services/jsonManager.js
+import messageManager from './message-manager.js';
+// services/json-manager.js
 
 /**
  * Recupera JSON tramite fetch. 
@@ -8,7 +8,7 @@ import messageManager from './messageManager.js';
 export async function getJson(path) {
     // Se siamo nel browser, assicuriamoci che il path sia relativo alla root
     const url = path.startsWith('http') ? path : window.location.origin + path;
-    
+
     try {
         const response = await fetch(url);
         //messageManager.error("JSON: " + Trovato);

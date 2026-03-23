@@ -1,12 +1,17 @@
+/**
+ * Componente Bottombar (Footer)
+ * Gestisce la visualizzazione delle informazioni istituzionali e dei contatti.
+ */
 let Bottombar = {
     render: async () => {
+        // Nota: Assicurati che il percorso src punti correttamente a src/assets/...
         let view =  /*html*/`
         <footer class="py-5 mt-5" style="background-color: #003366 !important; color: white !important;">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 mb-4 text-center text-md-start">
                         <div class="mb-3">
-                            <img src="assets/img/logo_izs_sicilia.png" 
+                            <img src="/src/assets/img/logo-izs-sicilia.png" 
                                  alt="Logo IZS Sicilia" 
                                  style="max-height: 90px; width: auto; display: block;">
                         </div>
@@ -17,9 +22,9 @@ let Bottombar = {
                     <div class="col-md-3 mb-4">
                         <h6 class="text-uppercase fw-bold mb-3">Link Utili</h6>
                         <ul class="list-unstyled">
-                            <li><a href="https://amministrazione-trasparente.izssicilia.it" class="text-white-50 text-decoration-none small hover-white">Amministrazione Trasparente</a></li>
+                            <li><a href="https://amministrazione-trasparente.izssicilia.it" target="_blank" class="text-white-50 text-decoration-none small hover-white">Amministrazione Trasparente</a></li>
                             <li><a href="#" class="text-white-50 text-decoration-none small hover-white">Albo Pretorio</a></li>
-                            <li><a href="https://amministrazione-trasparente.izssicilia.it/dati-ulteriori/privacy" class="text-white-50 text-decoration-none small hover-white">Privacy Policy</a></li>
+                            <li><a href="https://amministrazione-trasparente.izssicilia.it/dati-ulteriori/privacy" target="_blank" class="text-white-50 text-decoration-none small hover-white">Privacy Policy</a></li>
                         </ul>
                     </div>
 
@@ -40,10 +45,22 @@ let Bottombar = {
                     </div>
                 </div>
             </div>
+            
+            <style>
+                /* Effetto hover per i link del footer */
+                .hover-white:hover {
+                    color: white !important;
+                    transition: 0.3s;
+                }
+            </style>
         </footer>
         `
         return view
     },
+
+    /**
+     * Logica post-rendering (es. inizializzazione tooltips o listener)
+     */
     after_render: async () => { }
 }
 
