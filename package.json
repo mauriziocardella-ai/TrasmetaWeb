@@ -6,8 +6,5 @@
   "scripts": {
     "start": "node --env-file=.env server.mjs",
     "dev": "node --watch --env-file=.env server.mjs"
-  },
-  "dependencies": {
-    "node-firebird": "^2.0.2"
   }
 }
