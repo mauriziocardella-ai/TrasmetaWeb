@@ -1,5 +1,5 @@
 import Utils from '/src/services/utils.js';
-import { getJson } from '/src/services/json-manager.js';
+import jsonManager from '/src/services/json-manager.js';
 import messageManager from '/src/services/message-manager.js';
 
 let scheda = {
@@ -10,7 +10,7 @@ let scheda = {
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-8">
-                                <label for="codice_intervento" class="form-label fw-bold">Intervento Radisan</label>
+                                <label for="codice_intervento" class="form-label fw-bold">Intervento</label>
                                 <select id="codice_intervento" class="form-select">
                                     <option value="">Caricamento lista...</option>
                                 </select>
@@ -19,6 +19,14 @@ let scheda = {
                             <div class="col-md-4">
                                 <label class="form-label">Note Operative</label>
                                 <input type="text" id="note_interv" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label for="codice_matrice" class="form-label fw-bold">Matrici</label>
+                                <select id="codice_matrice" class="form-select">
+                                    <option value="">Caricamento lista...</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -44,30 +52,16 @@ let scheda = {
         try {
             messageManager.showLoading();
 
-            // 1. CARICAMENTO DELLA LISTA (I dati per popolare le <option>)
-            const responseList = await getJson('/src/json/test2.json');
-            const listaElementi = await responseList;
+            // Carichiamo i vari JSON (o chiamate API)
+            const [interventi, matrici] = await Promise.all([
+                jsonManager.get('/src/json/interventi.json'),
+                jsonManager.get('/src/json/matrici.json')
+            ]);
 
-            // Popoliamo il dropdown
-            let htmlOptions = '<option value="">-- Seleziona --</option>';
-            listaElementi.forEach(item => {
-                htmlOptions += `<option value="${item.codice}">${item.codice} - ${item.descrizione}</option>`;
-            });
-            selectElement.innerHTML = htmlOptions;
+            // 1. Popoliamo tutti i dropdown usando la funzione generale
+            Utils.populateSelect('codice_intervento', interventi, 'codice_intervento', 'descrizione');
+            Utils.populateSelect('codice_matrice', matrici, 'codice_matrice', 'descrizione');
 
-            // 2. CARICAMENTO DEL RECORD (I dati da visualizzare nel form)
-            // Supponiamo che il server restituisca: { "codice_intervento": "MS.001", "note_interv": "Urgenza" }
-            const recordAttuale = { 
-                "codice_intervento": "MS.001", 
-                "note_interv": "Verifica periodica" 
-            };
-
-            /**
-             * USARE AUTOMAPDATA QUI:
-             * Poiché il dropdown ora ha le sue <option>, autoMapData troverà l'id 
-             * 'codice_intervento', vedrà che il valore è 'MS.001' e lo selezionerà.
-             */
-            Utils.autoMapData(recordAttuale, container);
 
         } catch (error) {
             console.error(error);

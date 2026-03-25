@@ -39,7 +39,35 @@ const Utils = {
     sleep: (ms) => {
         return new Promise(resolve => setTimeout(resolve, ms));
     },
+/**
+     * Popola un <select> e imposta il primo record come default se non specificato.
+     */
+    populateSelect: (id, data, valField, descField, selectedValue = null, defaultText = null) => {
+        const select = document.getElementById(id);
+        if (!select || !data || data.length === 0) return;
 
+        // 1. Se selectedValue è null, prendiamo il valore del primo elemento della lista
+        const valueToSet = (selectedValue !== null) ? selectedValue : data[0][valField];
+
+        // 2. Genera le opzioni
+        let optionsHTML = "";
+        
+        // Aggiungiamo l'opzione vuota solo se è stato passato un defaultText (es. "-- Seleziona --")
+        if (defaultText) {
+            optionsHTML += `<option value="">${defaultText}</option>`;
+        }
+
+        optionsHTML += data.map(item => {
+            const val = item[valField];
+            const desc = item[descField];
+            const isSelected = (String(val) === String(valueToSet)) ? 'selected' : '';
+            
+            return `<option value="${val}" ${isSelected}>${val} - ${desc}</option>`;
+        }).join('');
+
+        // 3. Inserisce nel DOM
+        select.innerHTML = optionsHTML;
+    },
     /**
      * AUTO-MAPPING: Dal JSON del Database ai Campi HTML
      * Cerca gli elementi per ID (case-insensitive) e ne popola il valore.
@@ -69,23 +97,30 @@ const Utils = {
      * GET FORM DATA: Dai Campi HTML al JSON per il salvataggio
      * Estrae i valori da tutti gli input/select/textarea dotati di ID.
      */
-    getFormData: (container = document) => {
+    getFormData: (container) => {
         const data = {};
-        const inputs = container.querySelectorAll('input, select, textarea');
-        
-        inputs.forEach(input => {
-            if (input.id) {
-                // Gestione specifica per i tipi di dati
-                if (input.type === 'checkbox') {
-                    data[input.id] = input.checked ? 1 : 0; // Standard Firebird per booleani
-                } else if (input.type === 'number') {
-                    data[input.id] = input.value !== '' ? parseFloat(input.value) : null;
-                } else {
-                    data[input.id] = input.value.trim();
-                }
+        // Seleziona tutti gli elementi di input, select e textarea con un ID
+        const elements = container.querySelectorAll('input[id], select[id], textarea[id]');
+
+        elements.forEach(el => {
+            const key = el.id;
+            const value = el.value;
+
+            // Salviamo il valore principale
+            data[key] = value;
+
+            // LOGICA SPECIALE PER SELECT: estraiamo la descrizione
+            if (el.tagName === 'SELECT') {
+                const selectedOption = el.options[el.selectedIndex];
+                // Creiamo una chiave extra, es: codice_intervento_desc
+                // Se non c'è nulla di selezionato, mettiamo stringa vuota
+                data[`${key}_desc`] = selectedOption ? selectedOption.text : "";
+                
+                // Opzionale: se vuoi pulire la descrizione (es. togliere il codice iniziale)
+                // data[`${key}_label`] = data[`${key}_desc`].split(' - ').pop();
             }
         });
-        
+
         return data;
     }
 }

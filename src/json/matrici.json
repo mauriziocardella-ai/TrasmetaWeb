@@ -1,0 +1,5 @@
+[
+    { "codice_matrice": "MAT.001", "descrizione": "Uova" },
+    { "codice_matrice": "MAT.002", "descrizione": "Carne" },
+    { "codice_matrice": "MAT.003", "descrizione": "Pesce" }
+]

@@ -1,7 +1,7 @@
 import Mod1_Detail from './Mod1_Detail.js'
 import modREST from './modREST.js';
 // server.mjs
-import { getJson } from '/src/services/json-manager.js';
+import jsonManager from '/src/services/json-manager.js';
 import messageManager from '/src/services/message-manager.js';
 
 let Mod1 = {
@@ -38,7 +38,7 @@ let Mod1 = {
                 console.log("Richiesta file JSON locale via jsonManager...");
 
                 // Usiamo la funzione del tuo servizio per pulizia
-                const datiJson = await getJson('/src/json/test-data.json');
+                const datiJson = await jsonManager.get('/src/json/test-data.json');
 
                 if (datiJson) {
                     console.log("Dati ricevuti:", datiJson);

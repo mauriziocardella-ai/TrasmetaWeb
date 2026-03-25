@@ -1,0 +1,5 @@
+[
+    { "codice_intervento": "MS.001", "descrizione": "Analisi Microbiologica Acque" },
+    { "codice_intervento": "CH.045", "descrizione": "Test Chimico Residui" },
+    { "codice_intervento": "VZ.012", "descrizione": "Screening Virologico" }
+]
