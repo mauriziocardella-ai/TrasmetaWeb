@@ -20,7 +20,7 @@ let Navbar = {
                             </a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="/#/mod1">Modello 1 Residui Fitosanitari</a></li>
-                                <li><a class="dropdown-item" href="#">Modello 2 Vigilanza e controllo alimenti e bevande</a></li>
+                                <li><a class="dropdown-item" href="/#/scheda">Scheda</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#">Modello 3 ....</a></li>
                             </ul>

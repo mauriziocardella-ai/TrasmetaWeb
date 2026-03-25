@@ -10,6 +10,7 @@ import Error404 from './views/pages/Error404.js';
 
 // Import Moduli Specifici (Radisan)
 import Mod1 from './views/pages/radisan/Mod1.js';
+import Scheda from './views/pages/radisan/scheda.js';
 
 // Import Componenti UI
 import Navbar from './views/components/Navbar.js';
@@ -25,7 +26,8 @@ import Utils from './services/Utils.js';
 const routes = {
     '/': Home,
     '/mod1': Mod1,   // Accessibile via #/mod1
-    '/element': Mod1    // Aggiunto per supportare la rotta #/element?codice=...
+    '/element': Mod1,    // Aggiunto per supportare la rotta #/element?codice=...
+    '/scheda': Scheda
 };
 
 /**

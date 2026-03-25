@@ -49,7 +49,26 @@ const messageManager = {
             toastElement.remove();
         });
     },
+    /**
+     * Gestione Overlay di Caricamento
+     */
+    showLoading: () => {
+        if (document.getElementById('global-loader')) return;
+        
+        const loaderHTML = `
+            <div id="global-loader" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" 
+                 style="background: rgba(255,255,255,0.7); z-index: 9999;">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+                    <span class="visually-hidden">Caricamento...</span>
+                </div>
+            </div>`;
+        document.body.insertAdjacentHTML('beforeend', loaderHTML);
+    },
 
+    hideLoading: () => {
+        const loader = document.getElementById('global-loader');
+        if (loader) loader.remove();
+    },
     // Metodi scorciatoia (shorthands)
     success: (msg) => messageManager.show(msg, 'success'),
     error: (msg) => messageManager.show(msg, 'danger'),
