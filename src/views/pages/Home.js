@@ -1,6 +1,6 @@
-let Home = {
-    render: async () => {
-        let view =  /*html*/`
+export default class Home {
+    async render() {
+        return `
             <section id="home-section">
                 <div class="p-5 mb-4 bg-light rounded-3 border shadow-sm">
                     <div class="container-fluid py-5">
@@ -12,9 +12,8 @@ let Home = {
                 </div>
             </section>
         `
-        return view
-    },
-    after_render: async () => { }
+    }
+
+    async after_render() {}
 }
 
-export default Home;

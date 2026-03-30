@@ -1,7 +1,6 @@
-let Navbar = {
-    render: async () => {
-        let view =  /*html*/
-            `
+export default class Navbar {
+    async render() {
+        return `
                 <nav class="navbar navbar-expand-lg navbar-dark bg-agid shadow-sm">
                     <div class="container">
                         <a class="navbar-brand d-flex flex-column" href="/#/">
@@ -30,10 +29,9 @@ let Navbar = {
                     </div>
                 </nav>
             `
-        return view
-    },
-    after_render: async () => { }
+
+    }
+    async after_render() { }
 
 }
 
-export default Navbar;

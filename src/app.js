@@ -43,11 +43,13 @@ const router = async () => {
 
     // Rendering dei componenti statici (Header e Footer)
     // Nota: after_render() gestisce l'attivazione di listener o animazioni
-    header.innerHTML = await Navbar.render();
-    await Navbar.after_render();
+    const nav = new Navbar();
+    header.innerHTML = await nav.render();
+    if (nav.after_render) await nav.after_render();
 
-    footer.innerHTML = await Bottombar.render();
-    await Bottombar.after_render();
+    const foot = new Bottombar();
+    footer.innerHTML = await foot.render();
+    if (foot.after_render) await foot.after_render();
 
     // Analisi dell'URL corrente tramite Utils
     // Esempio: #/element?codice=MS.000.001 -> { resource: 'element', params: { codice: '...' } }
@@ -62,7 +64,9 @@ const router = async () => {
         (request.verb ? '/' + request.verb : '');
 
     // Selezione della pagina corretta o fallback su 404
-    let page = routes[parsedURL] ? routes[parsedURL] : Error404;
+    const PageClass = routes[parsedURL] ? routes[parsedURL] : Error404;
+
+    const page = new PageClass();
 
     // Rendering del contenuto principale della pagina
     content.innerHTML = await page.render();
@@ -72,7 +76,9 @@ const router = async () => {
      * È qui che Mod1.js leggerà i parametri da Utils.parseRequestURL() 
      * per avviare la chiamata REST verso il Proxy Node.
      */
-    await page.after_render();
+    if (page.after_render) {
+        await page.after_render();
+    }    
 };
 
 // Listener per il cambio dell'hash (navigazione tra pagine)

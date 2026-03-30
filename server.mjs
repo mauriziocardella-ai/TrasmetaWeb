@@ -2,8 +2,8 @@ import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { join, extname, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { apiRest } from '#services/api-rest';
-import { HOST, PORT } from '#config';
+import { apiRest } from './api-proxy.js';
+import { HOST, PORT } from './config.js';
 
 // ✅ Corretta definizione della root del progetto
 const __filename = fileURLToPath(import.meta.url);
@@ -30,7 +30,8 @@ const server = createServer(async (req, res) => {
     // 2. GESTIONE API
     if (pathname.startsWith('/api/')) {
         try {
-            return await apiRest(pathname + url.search, res, req);
+            const cleanPath = req.url.replace('/api/', '');
+            return await apiRest(cleanPath, res, req);
         } catch (e) {
             res.writeHead(500);
             return res.end(JSON.stringify({ error: "Errore interno Proxy" }));

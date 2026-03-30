@@ -1,11 +1,7 @@
-/**
- * Componente Bottombar (Footer)
- * Gestisce la visualizzazione delle informazioni istituzionali e dei contatti.
- */
-let Bottombar = {
-    render: async () => {
-        // Nota: Assicurati che il percorso src punti correttamente a src/assets/...
-        let view =  /*html*/`
+export default class Bottombar {
+    async render() {
+        /*html*/
+        return `
         <footer class="py-5 mt-5" style="background-color: #003366 !important; color: white !important;">
             <div class="container">
                 <div class="row">
@@ -55,13 +51,11 @@ let Bottombar = {
             </style>
         </footer>
         `
-        return view
-    },
+
+    }
 
     /**
      * Logica post-rendering (es. inizializzazione tooltips o listener)
      */
-    after_render: async () => { }
+    async after_render() {} 
 }
-
-export default Bottombar;
