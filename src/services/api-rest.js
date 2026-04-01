@@ -4,6 +4,31 @@ const apiRest = {
         const response = await fetch(`/api/${endpoint}`);
         if (!response.ok) throw new Error(`Errore API: ${response.status}`);
         return await response.json();
+    },
+    post: async (endpoint, data) => {
+        const response = await fetch(`/api/${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error(`Errore API: ${response.status}`);
+        return await response.json();
+    },
+    put: async (endpoint, data) => {
+        const response = await fetch(`/api/${endpoint}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error(`Errore API: ${response.status}`);
+        return await response.json();
+    },
+    delete: async (endpoint) => {
+        const response = await fetch(`/api/${endpoint}`, {
+            method: 'DELETE'
+        });
+        if (!response.ok) throw new Error(`Errore API: ${response.status}`);
+        return await response.json();
     }
 };
 

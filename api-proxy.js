@@ -28,8 +28,19 @@ export async function apiRest(pathname, res, req) {
             .update(dataToSign)
             .digest('hex');
 
-        // Esecuzione chiamata reale al server Firebird
-        const response = await fetch(targetUrl, {
+        // Lettura asincrona del body (se presente)
+        let bodyString = null;
+        if (['POST', 'PUT', 'PATCH'].includes(method)) {
+            const buffers = [];
+            for await (const chunk of req) {
+                buffers.push(chunk);
+            }
+            if (buffers.length > 0) {
+                bodyString = Buffer.concat(buffers).toString();
+            }
+        }
+
+        const fetchOptions = {
             method: method,
             headers: {
                 'X-Timestamp': timestamp,
@@ -37,9 +48,14 @@ export async function apiRest(pathname, res, req) {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
-            // Se POST/PUT, dovresti aggiungere anche il body:
-            // body: method !== 'GET' ? JSON.stringify(req.body) : null
-        });
+        };
+
+        if (bodyString) {
+            fetchOptions.body = bodyString;
+        }
+
+        // Esecuzione chiamata reale al server Firebird
+        const response = await fetch(targetUrl, fetchOptions);
 
         const text = await response.text();
         let data;
