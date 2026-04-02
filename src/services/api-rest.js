@@ -11,7 +11,11 @@ const apiRest = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
-        if (!response.ok) throw new Error(`Errore API: ${response.status}`);
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            const errMsg = errData.message || errData.error || response.statusText;
+            throw new Error(`Errore API (${response.status}): ${errMsg}`);
+        }
         return await response.json();
     },
     put: async (endpoint, data) => {

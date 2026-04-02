@@ -7,9 +7,9 @@ export async function apiRest(pathname, res, req) {
     // pathname arriva già pulito dal server.mjs (es: "get-pratica?id=502")
     const resource = pathname.startsWith('/') ? pathname : `/${pathname}`;
 
-    // Costruzione URL target verso Firebird
-    const baseUrl = new URL(REST_API_URL);
-    const targetUrl = new URL(resource.substring(1), baseUrl).href; 
+    // Costruzione URL target verso Firebird in modo sicuro, senza perdere il path di REST_API_URL
+    const baseUrlStr = REST_API_URL.endsWith('/') ? REST_API_URL.slice(0, -1) : REST_API_URL;
+    const targetUrl = `${baseUrlStr}${resource}`;
 
     const method = req.method;
 
@@ -45,10 +45,16 @@ export async function apiRest(pathname, res, req) {
             headers: {
                 'X-Timestamp': timestamp,
                 'X-Signature': signature,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Accept': 'application/json'
             }
         };
+
+        // Eredita il content-type dal frontend, o fall back su json
+        if (req.headers['content-type']) {
+            fetchOptions.headers['Content-Type'] = req.headers['content-type'];
+        } else {
+            fetchOptions.headers['Content-Type'] = 'application/json';
+        }
 
         if (bodyString) {
             fetchOptions.body = bodyString;
